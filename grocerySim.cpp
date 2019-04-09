@@ -9,7 +9,7 @@
 grocerySim::grocerySim(double arrivalRate, double maxServiceTime, int seed) {
     currentTime = 0;
     this->newCustomerArrivalRate = arrivalRate;
-    double secPerMin = 60.0;
+    double const secPerMin = 60.0;
     this->maxCustomerServiceTime = static_cast<int>(maxServiceTime * secPerMin);
     this->seed = seed;
 }
@@ -25,7 +25,7 @@ int grocerySim::availableCashierIndex() {
 
 void grocerySim::serveCustomer(Event &customer) {
     cashiers[customer.groceryLine].isHelpingCustomer = true;
-    double secPerMin = 60.0;
+    double const secPerMin = 60.0;
     customer.firingTime = (currentTime/secPerMin) + customer.serviceTime;
     customer.beingServed = 1;
     eventTiming.push(customer);
@@ -79,10 +79,10 @@ void grocerySim::printResult(){
 
 void grocerySim::newComeCustomer(){
     srand(static_cast<unsigned int>(seed));
-    double secPerMin = 60.0;
+    double const secPerMin = 60.0;
     int arrivalSpacing = static_cast<int>((1 / newCustomerArrivalRate) * secPerMin);
-    double hr = 12.0;
-    double minPerHr = 60.0;
+    double const hr = 12.0;
+    double const minPerHr = 60.0;
     int totalTime = hr * minPerHr * secPerMin;
     
     for (int s = arrivalSpacing; s < totalTime; s += arrivalSpacing) {
@@ -100,7 +100,8 @@ void grocerySim::run() {
     while (!eventTiming.empty()) {
         Event c = eventTiming.top();
         eventTiming.pop();
-        currentTime = static_cast<long>(c.firingTime * 60);
+        double const secPerMin = 60.0;
+        currentTime = static_cast<long>(c.firingTime * secPerMin);
         if (c.beingServed == 0) {
             int cashierNumber = availableCashierIndex();
             if (cashierNumber >= 0 && cashiers[cashierNumber].line.empty()) {

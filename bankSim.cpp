@@ -11,7 +11,7 @@
 bankSim::bankSim(double arrivalRate, double maxServiceTime, int seed) {
     currentTime = 0;
     this->newCustomerArrivalRate = arrivalRate;
-    double secPerMin = 60.0;
+    double const secPerMin = 60.0;
     this->maxCustomerServiceTime = static_cast<int>(maxServiceTime * secPerMin);
     this->seed = seed;
 }
@@ -31,7 +31,7 @@ void bankSim::serveCustomer(Event customer) {
             teller = true;
             customer.beingServed = 1;
             customer.totalServiceTime = customer.arrivalTime;
-            double secPerMin = 60.0;
+            double const secPerMin = 60.0;
             customer.firingTime = (currentTime/secPerMin) + customer.serviceTime;
             eventTiming.push(customer);
             break;
@@ -70,11 +70,11 @@ void bankSim::printResult(){
 void bankSim::newComeCustomer(){
     srand(static_cast<unsigned int>(seed));
     
-    double secPerMin = 60.0;
+    double const secPerMin = 60.0;
     int arrivalSpacing = static_cast<int>((1 / newCustomerArrivalRate) * secPerMin);
     
-    double hr = 12.0;
-    double hrPerMin = 60.0;
+    double const hr = 12.0;
+    double const hrPerMin = 60.0;
     int simTime = hr * hrPerMin * secPerMin;
     for (int s = arrivalSpacing; s < simTime; s += arrivalSpacing) {
         int minCustomerServiceTime = 2;
@@ -91,7 +91,7 @@ void bankSim::run() {
     while (!eventTiming.empty()) {
         Event c = eventTiming.top();
         eventTiming.pop();
-        double secPerMin = 60.0;
+        double const secPerMin = 60.0;
         currentTime = (c.firingTime * secPerMin);
         int qsize = line.size();
         if (c.beingServed == 0) {
