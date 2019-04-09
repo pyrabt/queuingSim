@@ -57,11 +57,11 @@ void bankSim::completeService(Event customer) {
 
 void bankSim::printResult(){
     std::sort(allCustomersWaitingTimes.begin(), allCustomersWaitingTimes.end());
-    double index10Tail = .10 * waitingTimes.size();
-    double index50Tail = .50 * waitingTimes.size();
-    double index90Tail = .90 * waitingTimes.size();
+    double index10Tail = .10 * allCustomersWaitingTimes.size();
+    double index50Tail = .50 * allCustomersWaitingTimes.size();
+    double index90Tail = .90 * allCustomersWaitingTimes.size();
     std::cout << "BANK\n";
-    std::cout << "Total number of customers served: " << waitingTimes.size() << "\n";
+    std::cout << "Total number of customers served: " << allCustomersWaitingTimes.size() << "\n";
     std::cout << "10th percentile: " << std::setprecision(3) << allCustomersWaitingTimes[index10Tail] << "\n";
     std::cout << "50th percentile: " << std::setprecision(3) << allCustomersWaitingTimes[index50Tail] << "\n";
     std::cout << "90th percentile: " << std::setprecision(4) << allCustomersWaitingTimes[index90Tail] << "\n";
@@ -74,7 +74,7 @@ void bankSim::newComeCustomer(){
     int arrivalSpacing = static_cast<int>((1 / newCustomerArrivalRate) * secPerMin);
     
     double hr = 12.0;
-    double hrPermin = 60.0;
+    double hrPerMin = 60.0;
     int simTime = hr * hrPerMin * secPerMin;
     for (int s = arrivalSpacing; s < simTime; s += arrivalSpacing) {
         int minCustomerServiceTime = 2;
@@ -84,12 +84,13 @@ void bankSim::newComeCustomer(){
 }
 
 void bankSim::run() {
-
+    
     newComeCustomer();
-
+    
     while (!eventTiming.empty()) {
         Event c = eventTiming.top();
         eventTiming.pop();
+        double secPerMin = 60.0;
         currentTime = (c.firingTime * secPerMin);
         int qsize = line.size();
         if (c.beingServed == 0) {
@@ -103,7 +104,7 @@ void bankSim::run() {
         }
     }
     printResult();
-   
+    
 }
 
 

@@ -22,12 +22,16 @@ int main(int argc, const char *argv[]) {
         } else if (simVersion == "supermarket") {
             grocerySim grocerySimulation = grocerySim(arrivalRate, maxCustomerServiceTime, seed);
             grocerySimulation.run();
+        }else if (simVersion == "all"){
+            bankSim bankSimulation = bankSim(arrivalRate, maxCustomerServiceTime, seed);
+            bankSimulation.run();
+            grocerySim grocerySimulation = grocerySim(arrivalRate, maxCustomerServiceTime, seed);
+            grocerySimulation.run();
+        }else{
+            std::cout << "Wrong input, please reenter. ./simulator arrivalRate, maxCustomerServiceTime, seed, simulatorType(bank, supermarket or all) \n";
         }
-    } else {
-        bankSim bankSimulation = bankSim(arrivalRate, maxCustomerServiceTime, seed);
-        bankSimulation.run();
-        grocerySim grocerySimulation = grocerySim(arrivalRate, maxCustomerServiceTime, seed);
-        grocerySimulation.run();
+    }else{
+        std::cout << "Wrong input, please reenter. ./simulator arrivalRate, maxCustomerServiceTime, seed, simulatorType(bank, supermarket or all) \n";
     }
     return 0;
 }

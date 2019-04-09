@@ -11,11 +11,11 @@
 #include "Event.hpp"
 
 struct Cashier {
-    bool helpingCustomer;
+    bool isHelpingCustomer;
     double totalWait;
     std::queue<Event> line;
     Cashier() {
-        helpingCustomer = false;
+        isHelpingCustomer = false;
         totalWait = 0;
     }
 };
@@ -26,27 +26,31 @@ private:
     std::array<Cashier, 6> cashiers = {Cashier(), Cashier(), Cashier(), Cashier(), Cashier(), Cashier() };
     //std::array<std::queue<Event>, 6> lines;
     std::priority_queue <Event, std::vector<Event>, CompareEvent> eventTiming;
-    std::vector<double> waitingTimes;
+    std::vector<double> allCustomersWaitingTimes;
     long currentTime; //seconds
-    double arrivalRate; //std::stod(argv[1]);
+    double newCustomerArrivalRate; //std::stod(argv[1]);
     int maxCustomerServiceTime; //std::stod(argv[2]);
     int seed;
-
-    int isCashierAvailable();
-
+    
+    int availableCashierIndex();
+    
     void serveCustomer(Event &customer);
-
+    
     void completeService(Event &customer);
-
+    
     int shortestLine();
-
+    
     void joinLine(int shortestLineID, Event &customer);
-
+    
     void serveNextCustomer(int lineNumber);
-
+    
+    void printResult();
+    
+    void newComeCustomer();
+    
 public:
     grocerySim(double arrivalRate, double maxServiceTime, int seed);
-
+    
     void run();
 };
 

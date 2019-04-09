@@ -20,17 +20,17 @@ private:
     double newCustomerArrivalRate; //std::stod(argv[1]);
     int maxCustomerServiceTime; //std::stod(argv[2]);
     int seed; //std::stod(argv[3]);
-
+    
     bool isTellerAvailable();
-
+    
     void serveCustomer(Event customer);
-
+    
     void completeService(Event customer);
     
     void printResult();
     
     void newComeCustomer();
-
+    
 public:
     bankSim(double arrivalRate, double maxServiceTime, int seed);
     void run();
