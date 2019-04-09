@@ -83,6 +83,7 @@ void bankSim::newComeCustomer(){
     }
 }
 
+//only one waiting line for six tellers
 void bankSim::run() {
     
     newComeCustomer();

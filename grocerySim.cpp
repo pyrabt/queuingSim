@@ -92,6 +92,7 @@ void grocerySim::newComeCustomer(){
     }
 }
 
+//six cashiers have each own waiting line
 void grocerySim::run() {
     
     newComeCustomer();
