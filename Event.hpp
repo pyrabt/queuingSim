@@ -12,7 +12,7 @@ struct Event {
     double serviceTime; // minutes
     double totalServiceTime;
     double firingTime;
-
+    
     Event(double arrivalTime, double serviceTime) {
         this->arrivalTime = arrivalTime;
         this->serviceTime = serviceTime;

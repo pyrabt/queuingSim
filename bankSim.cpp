@@ -10,13 +10,14 @@
 
 bankSim::bankSim(double arrivalRate, double maxServiceTime, int seed) {
     currentTime = 0;
-    this->arrivalRate = arrivalRate;
-    this->maxCustomerServiceTime = static_cast<int>(maxServiceTime * 60);
+    this->newCustomerArrivalRate = arrivalRate;
+    double const secPerMin = 60.0;
+    this->maxCustomerServiceTime = static_cast<int>(maxServiceTime * secPerMin);
     this->seed = seed;
 }
 
 bool bankSim::isTellerAvailable() {
-    for (bool teller : tellers) {
+    for (bool teller : isTellersServicing) {
         if (!teller) {
             return true;
         }
@@ -25,12 +26,13 @@ bool bankSim::isTellerAvailable() {
 }
 
 void bankSim::serveCustomer(Event customer) {
-    for (bool &teller : tellers) {
+    for (bool &teller : isTellersServicing) {
         if (!teller) {
             teller = true;
             customer.beingServed = 1;
             customer.totalServiceTime = customer.arrivalTime;
-            customer.firingTime = (currentTime/60.0) + customer.serviceTime;
+            double const secPerMin = 60.0;
+            customer.firingTime = (currentTime/secPerMin) + customer.serviceTime;
             eventTiming.push(customer);
             break;
         }
@@ -38,11 +40,11 @@ void bankSim::serveCustomer(Event customer) {
 }
 
 void bankSim::completeService(Event customer) {
-    for (bool &teller: tellers) {
+    for (bool &teller: isTellersServicing) {
         if (teller) {
             teller = false;
             customer.totalServiceTime = customer.firingTime - customer.arrivalTime;
-            waitingTimes.push_back(customer.totalServiceTime);
+            allCustomersWaitingTimes.push_back(customer.totalServiceTime);
             if (!line.empty()) {
                 Event nextCustomer = line.front();
                 serveCustomer(nextCustomer);
@@ -53,21 +55,44 @@ void bankSim::completeService(Event customer) {
     }
 }
 
-void bankSim::run() {
+void bankSim::printResult(){
+    std::sort(allCustomersWaitingTimes.begin(), allCustomersWaitingTimes.end());
+    double index10Tail = .10 * allCustomersWaitingTimes.size();
+    double index50Tail = .50 * allCustomersWaitingTimes.size();
+    double index90Tail = .90 * allCustomersWaitingTimes.size();
+    std::cout << "BANK\n";
+    std::cout << "Total number of customers served: " << allCustomersWaitingTimes.size() << "\n";
+    std::cout << "10th percentile: " << std::setprecision(3) << allCustomersWaitingTimes[index10Tail] << "\n";
+    std::cout << "50th percentile: " << std::setprecision(3) << allCustomersWaitingTimes[index50Tail] << "\n";
+    std::cout << "90th percentile: " << std::setprecision(4) << allCustomersWaitingTimes[index90Tail] << "\n";
+}
 
+void bankSim::newComeCustomer(){
     srand(static_cast<unsigned int>(seed));
-
-    int arrivalSpacing = static_cast<int>((1 / arrivalRate) * 60);
-
-    for (int s = arrivalSpacing; s < 43200; s += arrivalSpacing) {
-        Event customer = Event(s / 60.0, (rand() % maxCustomerServiceTime + 2) / 60.0);
+    
+    double const secPerMin = 60.0;
+    int arrivalSpacing = static_cast<int>((1 / newCustomerArrivalRate) * secPerMin);
+    
+    double const hr = 12.0;
+    double const hrPerMin = 60.0;
+    int simTime = hr * hrPerMin * secPerMin;
+    for (int s = arrivalSpacing; s < simTime; s += arrivalSpacing) {
+        int minCustomerServiceTime = 2;
+        Event customer = Event(s / secPerMin, (rand() % maxCustomerServiceTime + minCustomerServiceTime) / secPerMin);
         eventTiming.push(customer);
     }
+}
 
+//only one waiting line for six tellers
+void bankSim::run() {
+    
+    newComeCustomer();
+    
     while (!eventTiming.empty()) {
         Event c = eventTiming.top();
         eventTiming.pop();
-        currentTime = (c.firingTime * 60);
+        double const secPerMin = 60.0;
+        currentTime = (c.firingTime * secPerMin);
         int qsize = line.size();
         if (c.beingServed == 0) {
             if (isTellerAvailable() && line.empty()) {
@@ -79,16 +104,8 @@ void bankSim::run() {
             completeService(c);
         }
     }
-
-    std::sort(waitingTimes.begin(), waitingTimes.end());
-    double index10 = .10 * waitingTimes.size();
-    double index50 = .50 * waitingTimes.size();
-    double index90 = .90 * waitingTimes.size();
-    std::cout << "BANK\n";
-    std::cout << "Total number of customers served: " << waitingTimes.size() << "\n";
-    std::cout << "10th percentile: " << std::setprecision(3) << waitingTimes[index10] << "\n";
-    std::cout << "50th percentile: " << std::setprecision(3) << waitingTimes[index50] << "\n";
-    std::cout << "90th percentile: " << std::setprecision(4) << waitingTimes[index90] << "\n";
+    printResult();
+    
 }
 
 
